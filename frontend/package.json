@@ -1,0 +1,13 @@
+{
+  "name": "modanisa-mp-frontend",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "nuxt": "^3.0.0",
+    "vue": "^3.0.0"
+  }
+}

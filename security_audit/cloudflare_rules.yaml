@@ -1,0 +1,30 @@
+# Cloudflare WAF & Edge Security Config
+# Scope: modanisa-mp.com
+
+# 1. Rate Limiting Rules
+rules:
+  - id: auth-brute-force
+    expression: http.request.uri.path matches "/api/v1/auth/login"
+    action: block
+    ratelimit:
+      requests: 5
+      period: 60 # 1 minute
+
+  - id: global-api-throttle
+    expression: http.request.uri.path matches "/api/v1/*"
+    action: challenge
+    ratelimit:
+      requests: 100
+      period: 10
+
+# 2. Security Headers (HSTS, XSS Protection)
+headers:
+  Strict-Transport-Security: "max-age=31536000; includeSubDomains; preload"
+  X-Content-Type-Options: "nosniff"
+  X-Frame-Options: "DENY"
+  Content-Security-Policy: "default-src 'self'; img-src 'self' cdn.modanisa-mp.com; script-src 'self' 'unsafe-inline';"
+
+# 3. Geo-Blocking (Example: Block high-risk non-target regions)
+geo_block:
+  - regions: ["CN", "KP", "RU"]
+    action: js_challenge

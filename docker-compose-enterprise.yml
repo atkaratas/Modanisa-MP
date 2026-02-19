@@ -1,0 +1,45 @@
+services:
+  # Database: PostgreSQL with Super User
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=ModanisaSuperPass2026!
+      - POSTGRES_DB=modanisa_mp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Backend: NestJS Modüler Enterprise
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://admin:ModanisaSuperPass2026!@db:5432/modanisa_mp
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=ModanisaSuperPass2026!
+    depends_on:
+      - db
+      - redis
+
+  # Frontend: Nuxt.js Modanisa-Clone
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - API_URL=http://backend:3000
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  postgres_data:
